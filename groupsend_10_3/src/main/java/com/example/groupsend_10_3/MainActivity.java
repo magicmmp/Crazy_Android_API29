@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                        }).show();
    }
 
+   //处理运行时权限的结果
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults)
