@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
+                //检查发短信的运行时权限是否被允许，没有就申请
                 if(ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.SEND_SMS)!= PackageManager.PERMISSION_GRANTED)
                 {
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
+                //检查查询联系人的运行时权限是否被允许，没有就申请
                 if(ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.READ_CONTACTS)!= PackageManager.PERMISSION_GRANTED)
                 {
