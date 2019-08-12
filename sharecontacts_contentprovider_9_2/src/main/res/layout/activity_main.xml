@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+        <EditText
+            android:id="@+id/edit_id"
+            android:inputType="number"
+            android:hint="@string/person_id"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="#DAE6EBAE"
+            android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/clear_id"
+            android:text="清空"
+            android:background="#97D1EC"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+        <EditText
+            android:id="@+id/edit_name"
+            android:inputType="text"
+            android:hint="@string/person_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="#DAE6EBAE"
+            android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/clear_name"
+            android:text="清空"
+            android:background="#97D1EC"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+        <EditText
+            android:id="@+id/edit_phone"
+            android:inputType="phone"
+            android:hint="@string/person_phone"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="#DAE6EBAE"
+            android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/clear_phone"
+            android:text="清空"
+            android:background="#97D1EC"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <Button
+            android:id="@+id/save_data"
+            android:text="保存数据"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="56dp"/>
+        <Button
+            android:id="@+id/delete_item"
+            android:text="删除部分记录"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="56dp"/>
+        <Button
+            android:id="@+id/delete_all"
+            android:text="清空数据库"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="56dp"/>
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/check_data"
+        android:text="查看已有记录"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"/>
+
+
+    <ListView
+        android:id="@+id/list_view"
+        android:background="#84C3F5"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
+</LinearLayout>

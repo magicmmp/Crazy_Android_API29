@@ -1,0 +1,1 @@
+include ':app', ':sharecontacts_contentprovider_9_2', ':sharecontacts_contentresolver_9_2', ':groupsend_10_3'
