@@ -17,8 +17,8 @@ public class MusicService extends Service
 {
     MyReceiver serviceReceiver;
     AssetManager am;
-    String[] musics = new String[] { "wish.mp3", "promise.mp3",
-            "beautiful.mp3" };
+    String[] musics = new String[] { "wish4.mp3", "promise3.mp3",
+            "beautiful2.mp3" };
     MediaPlayer mPlayer;
     // 当前的状态，0x11代表没有播放；0x12代表正在播放；0x13代表暂停
     int status = 0x11;
