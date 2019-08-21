@@ -1,11 +1,12 @@
 package com.hrw.android.player.domain;
 
-import java.util.Date;
-
 import com.hrw.android.player.db.DataBaseHelper;
 import com.hrw.android.player.orm.annotation.Column;
 import com.hrw.android.player.orm.annotation.Table;
 
+import java.util.Date;
+
+//描述一首歌所有信息的JavaBean
 @Table(name = DataBaseHelper.AUDIO_LIST_TABLE_NAME)
 public class Audio extends BaseDomain {
 	private Long id;

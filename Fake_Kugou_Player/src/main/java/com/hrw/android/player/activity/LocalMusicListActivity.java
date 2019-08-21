@@ -1,9 +1,5 @@
 package com.hrw.android.player.activity;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.hrw.android.player.R;
@@ -22,11 +17,19 @@ import com.hrw.android.player.domain.Audio;
 import com.hrw.android.player.utils.Constants;
 import com.hrw.android.player.utils.Constants.PopupMenu;
 
-public class LocalMusicListActivity extends BaseListActivity {
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * 此页面是选项卡页面，显示详细的本地音乐列表
+ */
+public class LocalMusicListActivity extends BaseListActivity
+{
+	//AudioDaoImpl是访问音频数据库的实现类
 	private AudioDao audioDao = new AudioDaoImpl(this);
 	private ImageButton back_btn;
 	private List<Audio> musicList;
-	private String[] choices;
 	private MusicListAdapter adapter;
 	Set<Integer> popUpMenu = new HashSet<Integer>();
 
@@ -40,7 +43,9 @@ public class LocalMusicListActivity extends BaseListActivity {
 	// super.onPrepareDialog(id, dialog);
 	// }
 
-	private void initPopupMenu() {
+	//添加弹出菜单的子项
+	private void initPopupMenu()
+	{
 		popUpMenu.add(PopupMenu.ADD_ALL_TO.getMenu());
 		popUpMenu.add(PopupMenu.CREATE_LIST.getMenu());
 		popUpMenu.add(PopupMenu.EXIT.getMenu());
@@ -48,30 +53,27 @@ public class LocalMusicListActivity extends BaseListActivity {
 		popUpMenu.add(PopupMenu.SETTING.getMenu());
 	}
 
-	private void initButtons() {
+	private void initButtons()
+	{
 		final TabActivity tabActivity = (TabActivity) getParent();
 		final Intent toMenuListActivity = new Intent(this,
 				MenuListActivity.class);
 
+		//顶上的工具栏返回键
 		back_btn = (ImageButton) tabActivity.findViewById(R.id.list_back);
-		back_btn.setOnTouchListener(new OnTouchListener() {
+		back_btn.setOnTouchListener(new OnTouchListener()
+		{
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				if (event.getAction() == MotionEvent.ACTION_DOWN)
+				{
 
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					TabHost.TabSpec tab_spec_menu_list = tabActivity
-							.getTabHost().newTabSpec(
-									Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG
-											.getId()).setIndicator(
-									Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG
-											.getId());
-					tab_spec_menu_list.setContent(toMenuListActivity);
-					tabActivity.getTabHost().addTab(tab_spec_menu_list);
-					tabActivity.getTabHost().setCurrentTabByTag(
-							Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG.getId());
-					Intent updateUiIntent = new Intent(
-							Constants.UPDATE_UI_ACTION);
+				}
+				else if (event.getAction() == MotionEvent.ACTION_UP)
+				{
+					HomeActivity.tabHost.setCurrentTabByTag(Constants.TAB_SPEC.SongBookTab.getId());
+					Intent updateUiIntent = new Intent(Constants.UPDATE_UI_ACTION);
 					sendBroadcast(updateUiIntent);
 				}
 				return false;
@@ -79,7 +81,9 @@ public class LocalMusicListActivity extends BaseListActivity {
 		});
 	}
 
-	private void initListAdapter() {
+	private void initListAdapter()
+	{
+		//获取本地音乐列表
 		musicList = audioDao.getLocalAudioList();
 		adapter = new MusicListAdapter(this, musicList, null);
 		setListAdapter(adapter);
@@ -131,7 +135,8 @@ public class LocalMusicListActivity extends BaseListActivity {
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onResume()
+	{
 		super.onResume();
 		back_btn.setVisibility(ImageButton.VISIBLE);
 		TextView top_title_tv = (TextView) this.getParent().findViewById(
@@ -141,10 +146,16 @@ public class LocalMusicListActivity extends BaseListActivity {
 	}
 
 	@Override
-	protected Set<Integer> getPopUpMenu() {
-		if (adapter.getCheckedBoxPositionIds().size() > 0) {
+	protected Set<Integer> getPopUpMenu()
+	{
+		//如果勾选了本地音乐列表的歌曲，
+		//就增加一个"添加到..."的菜单子项
+		if (adapter.getCheckedBoxPositionIds().size() > 0)
+		{
 			popUpMenu.add(PopupMenu.ADD_TO.getMenu());
-		} else {
+		}
+		else
+		{
 			popUpMenu.remove(PopupMenu.ADD_TO.getMenu());
 		}
 		return popUpMenu;

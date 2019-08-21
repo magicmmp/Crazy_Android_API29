@@ -1,17 +1,11 @@
 package com.hrw.android.player.activity;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.app.AlertDialog;
 import android.app.TabActivity;
-import android.app.AlertDialog.Builder;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,13 +14,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.hrw.android.player.R;
 import com.hrw.android.player.adapter.PlaylistAdapter;
@@ -38,8 +31,17 @@ import com.hrw.android.player.domain.Playlist;
 import com.hrw.android.player.utils.Constants;
 import com.hrw.android.player.utils.Constants.PopupMenu;
 
-public class PlaylistActivity extends BaseListActivity {
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+/**
+ * 这是点击"曲库"界面的第二栏"播放列表"，跳转到的界面
+ * 这个界面显示有几个自定义的播放列表
+ */
+public class PlaylistActivity extends BaseListActivity
+{
+	//PlaylistDaoImpl：对播放列表进行增减的类
 	private PlaylistDao playlistDao = new PlaylistDaoImpl(this);
 	private ImageButton back_btn;
 	private TabActivity tabActivity;
@@ -47,7 +49,8 @@ public class PlaylistActivity extends BaseListActivity {
 	Set<Integer> popUpMenu = new HashSet<Integer>();
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		setContentView(R.layout.playlist_list);
 		tabActivity = (TabActivity) getParent();
 		initPopupMenu();
@@ -57,17 +60,23 @@ public class PlaylistActivity extends BaseListActivity {
 		super.onCreate(savedInstanceState);
 	}
 
-	private void initCreateNewPlaylistButton() {
+	private void initCreateNewPlaylistButton()
+	{
 		createNewPlaylistBtn = (LinearLayout) findViewById(R.id.create_playlist_header);
-		createNewPlaylistBtn.setOnClickListener(new OnClickListener() {
+		createNewPlaylistBtn.setOnClickListener(new OnClickListener()
+		{
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v)
+			{
 				AlertDialog dialog = CreatePlaylistDialog
 						.getCreatePlaylistDialog(PlaylistActivity.this)
 						.create();
-				dialog.setOnCancelListener(new OnCancelListener() {
+				//为何没有点"确定"的监听器
+				dialog.setOnCancelListener(new OnCancelListener()
+				{
 					@Override
-					public void onCancel(DialogInterface dialog) {
+					public void onCancel(DialogInterface dialog)
+					{
 						initListAdapter();
 					}
 				});
@@ -76,7 +85,8 @@ public class PlaylistActivity extends BaseListActivity {
 		});
 	}
 
-	private void initListAdapter() {
+	private void initListAdapter()
+	{
 		List<Playlist> playlist = getAllPlaylist();
 		setListAdapter(new PlaylistAdapter(this, playlist));
 		this.getListView().setOnItemLongClickListener(
@@ -90,42 +100,52 @@ public class PlaylistActivity extends BaseListActivity {
 				});
 	}
 
-	private void showItemLongClickDialog(final long id) {
+	private void showItemLongClickDialog(final long id)
+	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		final CharSequence[] items = { "重命名", "删除" };
 		// TODO setMessage is something different with kugou's
-		builder.setItems(items, new DialogInterface.OnClickListener() {
+		builder.setItems(items, new DialogInterface.OnClickListener()
+		{
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onClick(DialogInterface dialog, int which)
+			{
 				// TODO Auto-generated method stub
-				switch (which) {
-				// TODO 0,1 to constant
-				case 0:
-					break;
-				case 1:
-					playlistDao.removePlaylist(String.valueOf(id));
-					initListAdapter();
-					break;
-				default:
-					break;
+				switch (which)
+				{
+					// TODO 0,1 to constant
+					case 0:
+						//重命名播放列表的功能没有写？
+						break;
+					case 1:
+						playlistDao.removePlaylist(String.valueOf(id));
+						initListAdapter();
+						break;
+					default:
+						break;
 				}
-
 			}
 		}).setTitle("id:" + id);
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
 
-	private void initBackButton() {
+	private void initBackButton()
+	{
 		final Intent toMenuListActivity = new Intent(this,
 				MenuListActivity.class);
 		back_btn = (ImageButton) tabActivity.findViewById(R.id.list_back);
-		back_btn.setOnTouchListener(new OnTouchListener() {
+		back_btn.setOnTouchListener(new OnTouchListener()
+		{
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				if (event.getAction() == MotionEvent.ACTION_DOWN)
+				{
 
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
+				}
+				else if (event.getAction() == MotionEvent.ACTION_UP)
+				{
 					TabHost.TabSpec tab_spec_menu_list = tabActivity
 							.getTabHost().newTabSpec("menu_list").setIndicator(
 									"menu_list");
@@ -139,21 +159,23 @@ public class PlaylistActivity extends BaseListActivity {
 				return false;
 			}
 		});
-
 	}
 
-	protected List<Playlist> getAllPlaylist() {
+	protected List<Playlist> getAllPlaylist()
+	{
 		List<Playlist> allPlaylist = playlistDao.getAllPlaylist();
-		for (Playlist playlst : allPlaylist) {
+		for (Playlist playlst : allPlaylist)
+		{
 			playlst.setCountAudio(countAudio(playlst.getId().toString()));
 		}
 		return allPlaylist;
 	}
 
-	private Integer countAudio(String pId) {
+	//查询编号为pId的播放列表有几首歌
+	private Integer countAudio(String pId)
+	{
 		ContentResolver cr = getContentResolver();
-		Uri uri = Uri
-				.parse("content://" + UriConstant.AUTHORITY + "/audiolist");
+		Uri uri = Uri.parse("content://" + UriConstant.AUTHORITY + "/audiolist");
 		String[] projection = { "id" };
 		String selection = "playlist_id = ?";
 		String[] selectionArgs = { pId };
@@ -164,18 +186,21 @@ public class PlaylistActivity extends BaseListActivity {
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onResume()
+	{
 		super.onResume();
 		back_btn.setVisibility(ImageButton.VISIBLE);
-		TextView top_title_tv = (TextView) tabActivity
-				.findViewById(R.id.top_title);
+		TextView top_title_tv = (TextView) tabActivity.findViewById(R.id.top_title);
 		top_title_tv.setText(R.string.menu_playlist);
 		// back_btn.setVisibility(ImageButton.VISIBLE);
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	//如果点了某个播放列表的的名称
+	protected void onListItemClick(ListView l, View v, int position, long id)
+	{
 		super.onListItemClick(l, v, position, id);
+		//跳到展开该播放列表的那个界面
 		Intent toMusicListActivity = new Intent(this, MusicListActivity.class);
 		toMusicListActivity.putExtra("com.hrw.android.player.pid", id);
 		TabHost.TabSpec tab_spec_menu_list = tabActivity.getTabHost()

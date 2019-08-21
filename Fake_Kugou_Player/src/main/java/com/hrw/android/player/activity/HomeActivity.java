@@ -1,10 +1,7 @@
 package com.hrw.android.player.activity;
 
-import java.util.List;
-
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -14,28 +11,34 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 
 import com.hrw.android.player.BelmotPlayer;
 import com.hrw.android.player.R;
 import com.hrw.android.player.broadcastreceiver.UpdateUiBroadcastReceiver;
 import com.hrw.android.player.component.dialog.ExitDialog;
-import com.hrw.android.player.component.menu.CommonPopupWindowMenu;
 import com.hrw.android.player.dao.AudioDao;
 import com.hrw.android.player.dao.impl.AudioDaoImpl;
 import com.hrw.android.player.utils.Constants;
 
-public class HomeActivity extends TabActivity {
+import java.util.List;
+
+/**
+ * 这是一个选项卡界面，顶上一个TopBar工具条，底下一排图片按钮，
+ * 中间是一个典型的选项卡界面TabHost。
+ *
+ */
+
+public class HomeActivity extends TabActivity
+{
 	private static final String TAG = "HomeActivity";
+	public static TabHost tabHost;
 	private BelmotPlayer belmotPlayer;
 	ImageButton tab_main;
 	ImageButton tab_random;
 	ImageButton tab_search;
 	ImageButton tab_menu;
 	View tabButtonSelectd;
-	LinearLayout pop_menu_layout;
-	CommonPopupWindowMenu popWindow;
 	private AudioDao audioDao;
 
 	/**
@@ -44,18 +47,21 @@ public class HomeActivity extends TabActivity {
 	 * @param c
 	 *            context where launch home from (used by SplashscreenActivity)
 	 */
+	/**
 	public static void launch(Context c) {
 		Intent intent = new Intent(c, HomeActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		c.startActivity(intent);
 	}
+*/
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.main_activity);
 		super.onCreate(savedInstanceState);
 		initTopButton();
-		initTabHost();
+		initAllTabHost();
 		initBottomMenu();
 		registerReceiver();
 		if (null == belmotPlayer) {
@@ -66,7 +72,8 @@ public class HomeActivity extends TabActivity {
 		}
 	}
 
-	private void registerReceiver() {
+	private void registerReceiver()
+	{
 		IntentFilter localIntentFilter = new IntentFilter();
 		localIntentFilter.addAction(Constants.UPDATE_UI_ACTION);
 		BroadcastReceiver updateUiBroadcastReceiver = new UpdateUiBroadcastReceiver(
@@ -74,27 +81,54 @@ public class HomeActivity extends TabActivity {
 		registerReceiver(updateUiBroadcastReceiver, localIntentFilter);
 	}
 
-	private void initTabHost() {
-		Intent intent = new Intent(this, MenuListActivity.class);
-		TabHost tabHost = getTabHost();
-		TabHost.TabSpec tabSpec = tabHost.newTabSpec(
-				Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG.getId()).setIndicator(
-				Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG.getId());
-		tabSpec.setContent(intent);
-		tabHost.addTab(tabSpec);// when tabhost add a tab,it seems that current
-		// TabActivity lose focus and the tabSpec get
-		// focus.and current TabActivity can't invoke
-		// onCreateOptionsMenu and onMenuOpened.
-		tabHost.setCurrentTab(0);
+	private void initAllTabHost()
+	{
+		tabHost = getTabHost();
+		Intent MenuListIntent = new Intent(this, MenuListActivity.class);
+		TabHost.TabSpec MenuListSpec = tabHost.newTabSpec(
+				Constants.TAB_SPEC.SongBookTab.getId()).setIndicator(
+				Constants.TAB_SPEC.SongBookTab.getId());
+		MenuListSpec.setContent(MenuListIntent);
+		tabHost.addTab(MenuListSpec);
+
+		Intent SearchIntent = new Intent(
+				this, SearchMusicActivity.class);
+		TabHost.TabSpec SearchSpec = tabHost.newTabSpec(
+				Constants.TAB_SPEC.SearchTab.getId()).setIndicator(
+				Constants.TAB_SPEC.SearchTab.getId());
+		SearchSpec.setContent(SearchIntent);
+		tabHost.addTab(SearchSpec);
+
+		Intent LocalMusicIntent = new Intent(this, LocalMusicListActivity.class);
+		TabHost.TabSpec LocalMusicSpec = tabHost.newTabSpec(
+				Constants.TAB_SPEC.LocalListTab.getId()).setIndicator(
+				Constants.TAB_SPEC.LocalListTab.getId());
+		LocalMusicSpec.setContent(LocalMusicIntent);
+		tabHost.addTab(LocalMusicSpec);
+
+		Intent PlaylistIntent = new Intent(this, PlaylistActivity.class);
+		TabHost.TabSpec PlaylistSpec = tabHost.newTabSpec(
+				Constants.TAB_SPEC.MyListTab.getId()).setIndicator(
+				Constants.TAB_SPEC.MyListTab.getId());
+		PlaylistSpec.setContent(PlaylistIntent);
+		tabHost.addTab(PlaylistSpec);
+
+		tabHost.setCurrentTabByTag(Constants.TAB_SPEC.SongBookTab.getId());
 	}
 
-	private void initTopButton() {
+
+	private void initTopButton()
+	{
+		//此intent将跳到播放界面
 		final Intent toPlayerActivity = new Intent(this, PlayerActivity.class);
 		ImageButton player_button = (ImageButton) findViewById(R.id.player);
-		player_button.setOnTouchListener(new OnTouchListener() {
+		player_button.setOnTouchListener(new OnTouchListener()
+		{
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_UP) {
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				if (event.getAction() == MotionEvent.ACTION_UP)
+				{
 					startActivityForResult(toPlayerActivity,
 							Constants.MENU_TO_PLAYER_REQUEST_CODE);
 				}
@@ -103,49 +137,54 @@ public class HomeActivity extends TabActivity {
 
 		});
 	}
-
-	private void switchActivity(Intent intent, String tag, String label) {
+/**
+	private void switchActivity(Intent intent, String tag, String label)
+	{
 		TabHost.TabSpec tab_spec_music_list = this.getTabHost().newTabSpec(tag)
 				.setIndicator(label);
 		tab_spec_music_list.setContent(intent);
 		this.getTabHost().addTab(tab_spec_music_list);
 		this.getTabHost().setCurrentTabByTag(tag);
 	}
-
-	OnClickListener bottomMenuOnClickListener = new OnClickListener() {
+*/
+	OnClickListener bottomMenuOnClickListener = new OnClickListener()
+	{
 		@Override
-		public void onClick(View v) {
+		public void onClick(View v)
+		{
 			boolean selected = v.isSelected();
-			if (!selected) {
+			if (!selected)
+			{
 				tabButtonSelectd.setSelected(false);
 				v.setSelected(true);
 				tabButtonSelectd = v;
-				switch (v.getId()) {
-				case R.id.tab_main: {
-					Intent toMainActivity = getIntent();
-					switchActivity(toMainActivity,
-							Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG.getId(),
-							Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG.getId());
-					break;
-				}
-				case R.id.tab_random: {
-					if (belmotPlayer.getPlayerEngine().isPlaying()) {
-						belmotPlayer.getPlayerEngine().stop();
-					}
-					List<String> musicList = audioDao.getLocalAudioPathList();
-					belmotPlayer.getPlayerEngine().setMediaPathList(musicList);
-					belmotPlayer.getPlayerEngine().setPlayingPath(
-							musicList.get(0));
-					belmotPlayer.getPlayerEngine().play();
-					break;
-				}
-				case R.id.tab_search: {
-					Intent toSearchMusicActivity = new Intent(
-							getApplicationContext(), SearchMusicActivity.class);
-					switchActivity(toSearchMusicActivity,
-							"toSearchMusicActivity", "toSearchMusicActivity");
-					break;
-				}
+				switch (v.getId())
+				{
+					case R.id.tab_main:
+						{
+							tabHost.setCurrentTabByTag(Constants.TAB_SPEC.SongBookTab.getId());
+							break;
+						}
+					case R.id.tab_random:
+						{
+							if (belmotPlayer.getPlayerEngine().isPlaying())
+							{
+								belmotPlayer.getPlayerEngine().stop();
+							}
+							List<String> musicList = audioDao.getLocalAudioPathList();
+							belmotPlayer.getPlayerEngine().setMediaPathList(musicList);
+							//这里有bug
+							//假如手机里一首歌也没有，会出现下标越界问题
+							belmotPlayer.getPlayerEngine().setPlayingPath(
+									musicList.get(0));
+							belmotPlayer.getPlayerEngine().play();
+							break;
+						}
+					case R.id.tab_search:
+						{
+							tabHost.setCurrentTabByTag(Constants.TAB_SPEC.SearchTab.getId());
+							break;
+						}
 				}
 			}
 
@@ -159,7 +198,8 @@ public class HomeActivity extends TabActivity {
 		}
 	};
 
-	private void initBottomMenu() {
+	private void initBottomMenu()
+	{
 		// TODO It is the first button on the bottom.
 		tab_main = (ImageButton) findViewById(R.id.tab_main);
 		tab_random = (ImageButton) findViewById(R.id.tab_random);
@@ -175,7 +215,8 @@ public class HomeActivity extends TabActivity {
 	}
 
 	@Override
-	protected void onStart() {
+	protected void onStart()
+	{
 		super.onStart();
 		// localTabHost1.setCurrentTab(0);
 	}
@@ -187,8 +228,12 @@ public class HomeActivity extends TabActivity {
 	}
 
 	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+	//处理按键事件
+	public boolean dispatchKeyEvent(KeyEvent event)
+	{
+		//如果按下返回键
+		if (event.getKeyCode() == KeyEvent.KEYCODE_BACK)
+		{
 			if (event.getAction() == KeyEvent.ACTION_DOWN
 					&& event.getRepeatCount() == 0) {
 				ExitDialog.getExitDialog(this).create().show();
@@ -210,9 +255,13 @@ public class HomeActivity extends TabActivity {
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	//从上一个活动返回时，回调这个方法
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == Constants.MENU_TO_PLAYER_REQUEST_CODE) {
+		//如果是从播放界面返回这里
+		if (requestCode == Constants.MENU_TO_PLAYER_REQUEST_CODE)
+		{
 			// Bundle bundle = data.getExtras();
 			switch (resultCode) {
 			case Constants.MENU_TO_PLAYER_RESULT_CODE:

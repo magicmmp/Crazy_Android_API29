@@ -1,11 +1,5 @@
 package com.hrw.android.player.activity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -13,8 +7,8 @@ import android.app.TabActivity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +21,6 @@ import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,126 +33,133 @@ import com.hrw.android.player.db.constants.UriConstant;
 import com.hrw.android.player.domain.Audio;
 import com.hrw.android.player.service.SystemService;
 import com.hrw.android.player.utils.Constants;
-import com.hrw.android.player.utils.DirectoryUtil;
 import com.hrw.android.player.utils.Constants.PopupMenu;
 
-public class MusicListActivity extends BaseListActivity {
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * 这是播放列表里面，对现有自定义播放列表添加歌曲的界面
+ * 点击"播放列表"里面的某个列表名，就会打开这个界面
+ * 应该改进的有：
+ * 改进1：添加歌曲应该是在现有本地播放列表里选择，因为所有本地音乐都在里面
+ * 改进2：无论点上面工具栏或者手机的返回键，都应该返回上次的界面，
+ *       而不是直接返回"曲库"
+ *
+ */
+public class MusicListActivity extends BaseListActivity
+{
 	private AudioDao audioDao = new AudioDaoImpl(this);
 	private ImageButton back_btn;
 	private ProgressDialog progress_dialog;
 	private List<Audio> musicList;
-	private List<Integer> checkedItem = new ArrayList<Integer>();
-	private String[] choices;
+	private List<Integer> checkedItem = new ArrayList<>();//choices的下标，表示选中的目录
+	private String[] choices;//所有包含音频文件的目录
 	private MusicListAdapter adapter;
 	Set<Integer> popUpMenu = new HashSet<Integer>();
-	private Handler musicListHandler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case 0: {
-				progress_dialog.dismiss();
-				break;
-			}
-			default:
-				break;
+	private Handler musicListHandler = new Handler()
+    {
+		public void handleMessage(Message msg)
+        {
+			switch (msg.what)
+            {
+                case 0:
+                {
+                    progress_dialog.dismiss();
+                    break;
+                }
+                default:
+                    break;
 			}
 		}
 	};
 
-	private Runnable mRunnable = new Runnable() {
-		public void run() {
-			for (int i = 0; i < checkedItem.size(); i++) {
-				String[] s = DirectoryUtil
-						.MediaScan(choices[checkedItem.get(i)]);
-				// System.out.println(s.toString());
-				for (int j = 0; j < s.length; j++) {
-					// System.out.println(s[j]);
-				}
-			}
-			musicListHandler.sendEmptyMessage(0);
-		}
-	};
-
-	// private Thread mThread = new Thread() {
-	//
-	// public void run() {
-	// for (int i = 0; i < checkedItem.size(); i++) {
-	// String[] s = DirectoryUtil
-	// .MediaScan(choices[checkedItem.get(i)]);
-	// // System.out.println(s.toString());
-	// for (int j = 0; j < s.length; j++) {
-	// // System.out.println(s[j]);
-	// }
-	// }
-	// mHandler.sendEmptyMessage(0); // 告诉handler
-	// }
-	// };
 
 	@Override
-	protected void onPrepareDialog(int id, Dialog dialog) {
+	//系统Activity的对话框，在弹出之前做一些设置
+	protected void onPrepareDialog(int id, Dialog dialog)
+    {
 		AlertDialog alertDialog = (AlertDialog) dialog;
 		ListView lv = alertDialog.getListView();
-		for (int i = 0; i < choices.length; i++) {
+		for (int i = 0; i < choices.length; i++)
+		{
 			lv.setItemChecked(i, false);
 		}
 		super.onPrepareDialog(id, dialog);
 	}
 
-	protected void showProcessDialog() {
+	protected void showProcessDialog()
+	{
 		progress_dialog = ProgressDialog.show(this, null, "正在扫描");
 	}
 
 	@Override
-	protected Dialog onCreateDialog(int id) {
+    //扫描目录对话框
+	protected Dialog onCreateDialog(int id)
+	{
 		final SystemService systemService = new SystemService(this);
+		//搜索音频数据库，将歌曲所在的目录全部返回
 		Set<String> folderList = systemService.getFolderContainMedia();
+        /**
+         * folderList.toArray(T [])
+         * 返回一个包含此 set 中所有元素的数组；返回数组的运行时类型是指定数组的类型。
+         * 如果指定的数组能容纳该 set，则它将在其中返回。
+         * 否则，将分配一个具有指定数组的运行时类型和此 set 大小的新数组。
+         */
 		choices = folderList.toArray(new String[folderList.size()]);
 		// 选项数组
 		// String[] choices = { "Facebook", "Twitter" };
 		// Check判断数组，与选项对应
 		// boolean[] chsBool = { true, false };
+
 		AlertDialog dialog = CommonAlertDialogBuilder.getInstance(this)
 				.setIcon(R.drawable.ic_menu_scan).setTitle("请选择扫描目录")
 				.setMultiChoiceItems(choices, null,
-						new OnMultiChoiceClickListener() {
+						new OnMultiChoiceClickListener()
+                        {
 							@Override
 							public void onClick(DialogInterface dialog,
-									int which, boolean isChecked) {
-								if (isChecked) {
+									int which, boolean isChecked)
+                            {
+								if (isChecked)
+								{
 									checkedItem.add(which);
-								} else {
+								}
+								else
+								{
 									checkedItem.remove((Object) which);
 								}
 							}
-
-						}).setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
+						}).setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
+                            //如果点了Yes
 							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								// System.out.println(checkedItem.toString());
-								for (int i = 0; i < checkedItem.size(); i++) {
-									// System.out.println(choices[checkedItem
-									// .get(i)]);
-									addMediaToPlaylist(systemService
-											.getMediasByFolder(choices[checkedItem
-													.get(i)]));
-									System.out
-											.println(systemService
-													.getMediasByFolder(
-															choices[checkedItem
-																	.get(i)])
-													.toString());
-
-								}
+							public void onClick(DialogInterface dialog, int which)
+                            {
 								showProcessDialog();
-								mRunnable.run();
-								checkedItem.clear();
+								// System.out.println(checkedItem.toString());
+								for (int i = 0; i < checkedItem.size(); i++)
+								{
+                                    /**systemService.getMediasByFolder():
+                                     * 在系统音频数据库里按路径path查找，返回包含前缀path的所有歌曲
+                                     * 的路径集合
+                                     */
+									//addMediaToPlaylist:把这些歌添加到数据库的歌曲表格
+									addMediaToPlaylist(systemService.getMediasByFolder(
+											choices[checkedItem.get(i)]));
+								}
 
+								//mRunnable.run();
+								checkedItem.clear();
 							}
 
 						}).setNegativeButton("No",
-						new DialogInterface.OnClickListener() {
-
+						new DialogInterface.OnClickListener()
+                        {
+                            //如果点了No
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
@@ -169,35 +169,47 @@ public class MusicListActivity extends BaseListActivity {
 		return dialog;
 	}
 
-	private String getMediaName(String path) {
-		String mediaName = path.substring(path.lastIndexOf("/") + 1, path
-				.length());
+	//从路径中截取文件名
+	private String getMediaName(String path)
+	{
+		String mediaName = path.substring(path.lastIndexOf("/") + 1);
 		return mediaName;
 	}
 
-	// 添加音乐到播放列表
-	private final void addMediaToPlaylist(Set<String> medias) {
+
+    /**
+     * @param medias 歌曲的路径集合
+     */
+	//把这些歌添加到自定义数据库的歌曲表格
+	private final void addMediaToPlaylist(Set<String> medias)
+    {
+        //pId是播放列表的ID，每首歌都属于一张播放列表
+		//这个Intent的数据从"播放列表"界面传来
 		String pId = this.getIntent().getExtras().get(
 				"com.hrw.android.player.pid").toString();
 		ContentValues values = new ContentValues();
-		for (String path : medias) {
-			if (getCountPlaylistMediaByName(getMediaName(path)) == 0) {
+		for (String path : medias)
+		{
+			//查询自定义数据库，当前播放列表是否有名为name的歌曲
+			if (getCountPlaylistMediaByName(getMediaName(path)) == 0)
+			{
 				Audio audio = new Audio();
-				audio.setPlaylistId(pId);
+				audio.setPlaylistId(pId);//设置歌曲属于哪个播放列表
 				audio.setName(getMediaName(path));
 				audio.setPath(path);
 				audio.setAddDate(new Date());
 				audio.setUpdateDate(new Date());
-				values = bulid(audio);
-				audioDao.addMediaToPlaylist(values);
+				values = bulid(audio);//将JavaBean转换成ContentValues形式
+				audioDao.addMediaToPlaylist(values);//把这首歌添加到数据库的歌曲表格
 			}
-
 		}
-		initListAdapter();
+		initListAdapter();//更新列表数据
 		Toast.makeText(this, "添加音乐成功", Toast.LENGTH_LONG).show();
 	}
 
-	private final int getCountPlaylistMediaByName(String name) {
+	//查询自定义数据库，当前播放列表是否有名为name的歌曲
+	private final int getCountPlaylistMediaByName(String name)
+    {
 		ContentResolver resolver = getContentResolver();
 		Uri uri = Uri
 				.parse("content://" + UriConstant.AUTHORITY + "/audiolist");
@@ -211,37 +223,32 @@ public class MusicListActivity extends BaseListActivity {
 		Cursor cursor = resolver.query(uri, proj, selection, selectionArgs,
 				null);
 		return cursor.getCount();
-
 	}
 
-	private void initButtons() {
+	private void initButtons()
+    {
 		final TabActivity tabActivity = (TabActivity) getParent();
-		final Intent toMenuListActivity = new Intent(this,
-				MenuListActivity.class);
 		LinearLayout addAudioBtn = (LinearLayout) findViewById(R.id.create_audio_list_header);
-		addAudioBtn.setOnClickListener(new OnClickListener() {
+		addAudioBtn.setOnClickListener(new OnClickListener()
+		{
 			@Override
-			public void onClick(View v) {
-				showDialog(1);
+			public void onClick(View v)
+			{
+				showDialog(1);//弹出activity的对话框，选择扫描目录
 			}
 		});
 		back_btn = (ImageButton) tabActivity.findViewById(R.id.list_back);
-		back_btn.setOnTouchListener(new OnTouchListener() {
+		back_btn.setOnTouchListener(new OnTouchListener()
+		{
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN)
+				{
 
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					TabHost.TabSpec tab_spec_menu_list = tabActivity
-							.getTabHost().newTabSpec(
-									Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG
-											.getId()).setIndicator(
-									Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG
-											.getId());
-					tab_spec_menu_list.setContent(toMenuListActivity);
-					tabActivity.getTabHost().addTab(tab_spec_menu_list);
-					tabActivity.getTabHost().setCurrentTabByTag(
-							Constants.TAB_SPEC_TAG.MAIN_SPEC_TAG.getId());
+				}
+				else if (event.getAction() == MotionEvent.ACTION_UP)
+				{
+					HomeActivity.tabHost.setCurrentTabByTag(Constants.TAB_SPEC.SongBookTab.getId());
 					Intent updateUiIntent = new Intent(
 							Constants.UPDATE_UI_ACTION);
 					sendBroadcast(updateUiIntent);
@@ -251,7 +258,8 @@ public class MusicListActivity extends BaseListActivity {
 		});
 	}
 
-	public void initListAdapter() {
+	public void initListAdapter()
+	{
 		musicList = audioDao.getAudioListByPlaylistId(this.getIntent()
 				.getExtras().get("com.hrw.android.player.pid").toString());
 
@@ -260,92 +268,12 @@ public class MusicListActivity extends BaseListActivity {
 		setListAdapter(adapter);
 		TextView count_audio = (TextView) findViewById(R.id.count_audio);
 		count_audio.setText("共" + String.valueOf(musicList.size()) + "首");
-		// count_audio.setText(count_audio.getText().toString().replace("{0}",
-		// String.valueOf(musicList.size())));
-		// this.getListView().setOnItemLongClickListener(
-		// new OnItemLongClickListener() {
-		// @Override
-		// public boolean onItemLongClick(AdapterView<?> parent,
-		// View view, int position, long id) {
-		// showItemLongClickDialog(id);
-		// return false;
-		// }
-		// });
-		// this.getListView().setOnItemClickListener(new OnItemClickListener() {
-		//
-		// @Override
-		// public void onItemClick(AdapterView<?> parent, View view,
-		// int position, long id) {
-		// Toast.makeText(
-		// getApplicationContext(),
-		// adapter.getCheckedBoxPositionIds().toString()
-		// + "---clicked item name:"
-		// + adapter.getItem(position)
-		// + "--Path:"
-		// + audioDao.getMusicPathByName(adapter.getItem(
-		// position).toString()),
-		// Toast.LENGTH_LONG).show();
-		// play(audioDao.getMusicPathByName(adapter.getItem(position)
-		// .toString()));
-		//
-		// }
-		//
-		// });
 	}
 
-	/**
-	 * private void play(String path) { ImageButton play_btn = (ImageButton)
-	 * findViewById(R.id.play_btn); try { if (mpu == null) { mpu =
-	 * MediaPlayerUtil.getInstance(onCompletionListener); } if (mpu.isPlaying()
-	 * && mpu.getPlayingMediaPath().equals(path)) {
-	 * play_btn.setVisibility(ImageButton.VISIBLE);
-	 * findViewById(R.id.position_icon).setPadding(30, 0, 0, 0);
-	 * play_btn.setImageResource(R.drawable.list_pause_indicator); mpu.pause();
-	 * } else if (mpu.isPause() && mpu.getPlayingMediaPath().equals(path)) {
-	 * play_btn.setVisibility(ImageButton.VISIBLE);
-	 * findViewById(R.id.position_icon).setPadding(30, 0, 0, 0);
-	 * play_btn.setImageResource(R.drawable.list_playing_indicator);
-	 * mpu.start(); } else { if (mpu.isPlaying() || mpu.isPause()) {
-	 * mpu.reset(); } play_btn.setVisibility(ImageButton.VISIBLE);
-	 * findViewById(R.id.position_icon).setPadding(30, 0, 0, 0);
-	 * play_btn.setImageResource(R.drawable.list_playing_indicator);
-	 * mpu.play(path); }
-	 * 
-	 * } catch (IllegalStateException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
-	 * catch block e.printStackTrace(); }
-	 * 
-	 * }
-	 **/
-
-	private void showItemLongClickDialog(final long id) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final CharSequence[] items = { "重命名", "删除" };
-		// TODO setMessage is something different with kugou's
-		builder.setItems(items, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				switch (which) {
-				// TODO 0,1 to constant
-				case 0:
-					break;
-				case 1:
-					// playlistDao.removePlaylist(String.valueOf(id));
-					initListAdapter();
-					break;
-				default:
-					break;
-				}
-
-			}
-		}).setTitle("id:" + id);
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+    {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.audio_list);
 		initPopupMenu();
@@ -353,31 +281,12 @@ public class MusicListActivity extends BaseListActivity {
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onResume()
+	{
 		initListAdapter();
 		super.onResume();
 	}
 
-	private List<String> getMusicListByPId(String id) {
-		List<String> musicList = new ArrayList<String>();
-		ContentResolver cr = getContentResolver();
-		Uri uri = Uri
-				.parse("content://" + UriConstant.AUTHORITY + "/audiolist");
-		String[] projection = { "audio_path" };
-		String selection = "playlist_id = ?";
-		String[] selectionArgs = { id };
-		Cursor c = cr.query(uri, projection, selection, selectionArgs, null);
-		if (c.moveToFirst()) {
-			for (int i = 0; i < c.getCount(); i++) {
-				c.moveToPosition(i);
-				musicList.add(c
-						.getString(c.getColumnIndexOrThrow("audio_path")));
-			}
-		}
-		c.close();
-		return musicList;
-
-	}
 
 	@Override
 	protected Set<Integer> getPopUpMenu() {
@@ -389,12 +298,12 @@ public class MusicListActivity extends BaseListActivity {
 		return popUpMenu;
 	}
 
-	private void initPopupMenu() {
+	private void initPopupMenu()
+    {
 		popUpMenu.add(PopupMenu.ADD_TO.getMenu());
 		popUpMenu.add(PopupMenu.CREATE_LIST.getMenu());
 		popUpMenu.add(PopupMenu.EXIT.getMenu());
 		popUpMenu.add(PopupMenu.HELP.getMenu());
 		popUpMenu.add(PopupMenu.SETTING.getMenu());
 	}
-
 }

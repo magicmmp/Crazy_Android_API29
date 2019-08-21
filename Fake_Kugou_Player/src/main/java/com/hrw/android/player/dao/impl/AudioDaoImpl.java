@@ -1,8 +1,5 @@
 package com.hrw.android.player.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,16 +12,25 @@ import com.hrw.android.player.dao.AudioDao;
 import com.hrw.android.player.db.constants.UriConstant;
 import com.hrw.android.player.domain.Audio;
 
-public class AudioDaoImpl extends ContextWrapper implements AudioDao {
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 这个类可以访问自定义或系统的音频数据库
+ */
+public class AudioDaoImpl extends ContextWrapper implements AudioDao
+{
 	private Uri uri = Uri.parse(UriConstant.AUDIO_LIST_URI);
 	private ContentResolver cr;
 
-	public AudioDaoImpl(Context base) {
+	public AudioDaoImpl(Context base)
+	{
 		super(base);
 	}
 
 	@Override
-	public String getMusicPathByName(String name) {
+	public String getMusicPathByName(String name)
+	{
 		String path = null;
 		ContentResolver cr = getContentResolver();
 		Uri uri = Uri.parse(UriConstant.AUDIO_LIST_URI);
@@ -57,6 +63,7 @@ public class AudioDaoImpl extends ContextWrapper implements AudioDao {
 	}
 
 	@Override
+
 	public List<Audio> getLocalAudioListByName(String name) {
 		List<Audio> musicList = new ArrayList<Audio>();
 		ContentResolver resolver = getContentResolver();
@@ -104,14 +111,17 @@ public class AudioDaoImpl extends ContextWrapper implements AudioDao {
 	}
 
 	@Override
-	public void addMediaToPlaylist(ContentValues values) {
+	//把这首歌添加到数据库的歌曲表格
+	public void addMediaToPlaylist(ContentValues values)
+	{
 		Uri uri = Uri.parse(UriConstant.AUDIO_LIST_URI);
 		ContentResolver cr = getContentResolver();
 		cr.insert(uri, values);
 	}
 
 	@Override
-	public void removeAudioFromPlaylist(String audioId, String playlistId) {
+	public void removeAudioFromPlaylist(String audioId, String playlistId)
+	{
 		ContentResolver cr = getContentResolver();
 		cr.delete(uri, "id = ? and playlist_id = ?", new String[] {
 				audioId, playlistId });
@@ -159,22 +169,25 @@ public class AudioDaoImpl extends ContextWrapper implements AudioDao {
 	}
 
 	@Override
-	public List<Audio> getLocalAudioList() {
+	//获取本地音乐列表
+	public List<Audio> getLocalAudioList()
+	{
 		List<Audio> musicList = new ArrayList<Audio>();
 		ContentResolver resolver = getContentResolver();
 		Cursor cursor = resolver.query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null,
 				MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-		if (cursor.moveToFirst()) {
-			for (int i = 0; i < cursor.getCount(); i++) {
+		if (cursor.moveToFirst())
+		{
+			for (int i = 0; i < cursor.getCount(); i++)
+			{
 				cursor.moveToPosition(i);
 				Audio audio = new Audio();
-				audio.setId(cursor.getLong(cursor
-						.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)));
-				audio
-						.setName(cursor
-								.getString(cursor
-										.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)));
+				audio.setId(cursor.getLong(
+						cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)));
+				audio.setName(cursor.getString(
+						cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)));
+				//MediaStore.Audio.Media.DATA 歌曲文件的绝对路径
 				audio.setPath(cursor.getString(cursor
 						.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)));
 				musicList.add(audio);

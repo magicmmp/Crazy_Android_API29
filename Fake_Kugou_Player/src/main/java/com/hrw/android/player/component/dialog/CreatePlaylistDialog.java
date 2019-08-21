@@ -13,14 +13,13 @@ import com.hrw.android.player.dao.PlaylistDao;
 import com.hrw.android.player.dao.impl.PlaylistDaoImpl;
 import com.hrw.android.player.utils.ImageScale;
 
-public class CreatePlaylistDialog extends CommonAlertDialogBuilder {
+public class CreatePlaylistDialog extends CommonAlertDialogBuilder
+{
 
-	public final static int RUNNING_BG = 0;
-	public final static int EXIT_APP = 1;
-	public final static int DIALOG_CANCEL = 2;
 	private static PlaylistDao playlistDao;
 
-	public static Builder getCreatePlaylistDialog(final Context context) {
+	public static Builder getCreatePlaylistDialog(final Context context)
+	{
 		playlistDao = new PlaylistDaoImpl(context);
 		AlertDialog.Builder builder = getInstance(context);
 		final EditText et = new EditText(context);

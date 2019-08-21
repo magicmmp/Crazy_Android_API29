@@ -1,17 +1,17 @@
 package com.hrw.android.player.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.hrw.android.player.BelmotPlayer;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import com.hrw.android.player.BelmotPlayer;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SystemService {
 
@@ -74,19 +74,30 @@ public class SystemService {
 		return list;
 
 	}
-
-	public Set<String> getFolderContainMedia() {
+//搜索音频数据库，将歌曲所在的目录全部返回
+	public Set<String> getFolderContainMedia()
+	{
 		Set<String> f = new HashSet<String>();
 		ContentResolver resolver = context.getContentResolver();
 		String[] proj = { MediaStore.Images.Media.DATA };
+		/**
+		 * android本地的媒体信息由MediaStore管理，并通过ContentProvider共享数据。
+		 * MediaStore有个内部类MediaStore.Images，维护系统中存储的图片信息，
+		 * 通过MediaStore.Images.Media.EXTERNAL_CONTENT_URI可以获取到图片的相关信息，
+		 * 包括路径MediaStore.Images.Media.DATA，
+		 * 文件名MediaStore.Images.Media.DISPLAY_NAME，
+		 * 大小MediaStore.Images.Media.SIZE等信息。
+		 */
+		//在音乐数据库搜  图片路径MediaStore.Images.Media.DATA?
 		Cursor cursor = resolver.query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, proj, null, null,
 				null);
-		if (cursor.moveToFirst()) {
-			for (int i = 0; i < cursor.getCount(); i++) {
+		if (cursor.moveToFirst())
+		{
+			for (int i = 0; i < cursor.getCount(); i++)
+			{
 				cursor.moveToPosition(i);
-				int column_index = cursor
-						.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+				int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 				/*
 				 * java中\\表示一个\，而regex中\\也表示\，所以当\\\\解析成regex的时候为\\
 				 */
@@ -97,9 +108,19 @@ public class SystemService {
 		return f;
 	}
 
-	public Set<String> getMediasByFolder(String path) {
+
+	/**
+	 * 在音频数据库里按路径path查找，返回包含前缀path的所有歌曲
+	 * 的路径集合
+	 * @param path 路径前缀
+	 * @return  所有路径前缀是path的歌曲路径
+	 */
+	public Set<String> getMediasByFolder(String path)
+	{
 		Set<String> f = new HashSet<String>();
 		ContentResolver resolver = context.getContentResolver();
+		//MediaStore.Audio.Media.DATA 歌曲文件的绝对路径
+		//MediaStore.Images.Media.DATA也一样
 		String[] proj = { MediaStore.Images.Media.DATA };
 		// String
 		// selection=MediaStore.Audio.Media.DATA+" like '/mnt/sdcard/Recording/%'";
@@ -110,11 +131,12 @@ public class SystemService {
 		Cursor cursor = resolver.query(
 				MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, proj, selection,
 				selectionArgs, null);
-		if (cursor.moveToFirst()) {
-			for (int i = 0; i < cursor.getCount(); i++) {
+		if (cursor.moveToFirst())
+		{
+			for (int i = 0; i < cursor.getCount(); i++)
+			{
 				cursor.moveToPosition(i);
-				int column_index = cursor
-						.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+				int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 				/*
 				 * java中\\表示一个\，而regex中\\也表示\，所以当\\\\解析成regex的时候为\\
 				 */

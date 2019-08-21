@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -189,37 +188,7 @@ public class MainActivity extends AppCompatActivity {
                        }).show();
    }
 
-   //处理运行时权限的结果
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults)
-    {
-        switch (requestCode)
-        {
-            case 1:
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
-                {
-                    sendSMG(sendList);
-                }
-                else
-                {
-                    Toast.makeText(this,"你拒绝了发短信的权限",Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case 2:
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
-                {
-                    readContacts();
-                }
-                else
-                {
-                    Toast.makeText(this,"你拒绝了查询联系人的权限",Toast.LENGTH_SHORT).show();
-                }
-                break;
-                default:break;
-        }
 
-    }
 }
 
 

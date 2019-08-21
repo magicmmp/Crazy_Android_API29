@@ -1,7 +1,5 @@
 package com.hrw.android.player.adapter;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,28 +10,35 @@ import android.widget.TextView;
 import com.hrw.android.player.R;
 import com.hrw.android.player.domain.Playlist;
 
-public class PlaylistAdapter extends BaseAdapter {
+import java.util.List;
+
+public class PlaylistAdapter extends BaseAdapter
+{
 	private Context context;
 	private List<Playlist> play_list;
 
-	public PlaylistAdapter(Context paramContext, List<Playlist> play_list) {
+	public PlaylistAdapter(Context paramContext, List<Playlist> play_list)
+	{
 		this.context = paramContext;
 		this.play_list = play_list;
 	}
 
 	@Override
-	public int getCount() {
+	public int getCount()
+	{
 
 		return play_list.size();
 	}
 
 	@Override
-	public Object getItem(int position) {
+	public Object getItem(int position)
+	{
 		return play_list.get(position).getName();
 	}
 
 	@Override
-	public long getItemId(int position) {
+	public long getItemId(int position)
+	{
 		return play_list.get(position).getId();
 	}
 

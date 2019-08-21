@@ -1,2 +1,2 @@
-include ':app', ':sharecontacts_contentprovider_9_2', ':sharecontacts_contentresolver_9_2', ':groupsend_10_3', ':audiomanager_10_4', ':alarmchangewallpaper_10_6', ':musicbox_10_7'
+include ':app', ':sharecontacts_contentprovider_9_2', ':sharecontacts_contentresolver_9_2', ':groupsend_10_3', ':audiomanager_10_4', ':alarmchangewallpaper_10_6', ':musicbox_10_7', ':audioeffect_11_1', ':videoview_11_1', ':sd_card_file_read_and_write', ':recordsound_11_2', ':rotatepolygon_12_3', ':minibrowser_13_4', ':livewallpaper_14_2', ':addshortcut_14_3', ':desktopapp_14_4', ':ledclock_14_4', ':accelerometer_15_1', ':sensor_15_2', ':compass_15_3'
 include ':Fake_Kugou_Player'

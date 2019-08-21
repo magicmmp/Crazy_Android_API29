@@ -1,10 +1,12 @@
 package com.hrw.android.player.domain;
 
-import java.util.Date;
-
 import com.hrw.android.player.db.DataBaseHelper;
 import com.hrw.android.player.orm.annotation.Column;
 import com.hrw.android.player.orm.annotation.Table;
+
+import java.util.Date;
+
+
 
 @Table(name = DataBaseHelper.PLAYLIST_TABLE_NAME)
 public class Playlist extends BaseDomain {
@@ -12,12 +14,12 @@ public class Playlist extends BaseDomain {
 	private Long id;
 	@Column(name = "name")
 	private String name;
-	@Column(name = "add_date")
+	@Column(name = "add_date")//数据库使用的列名
 	private Date addDate;
 	@Column(name = "modified_date")
 	private Date updateDate;
 
-	private Integer countAudio;
+	private Integer countAudio;//该播放列表有几首歌
 
 	public Long getId() {
 		return id;
@@ -27,7 +29,8 @@ public class Playlist extends BaseDomain {
 		return countAudio;
 	}
 
-	public void setCountAudio(Integer countAudio) {
+	public void setCountAudio(Integer countAudio)
+	{
 		this.countAudio = countAudio;
 	}
 

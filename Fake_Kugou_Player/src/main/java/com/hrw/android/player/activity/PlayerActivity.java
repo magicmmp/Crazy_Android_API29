@@ -18,7 +18,8 @@ import com.hrw.android.player.R;
 import com.hrw.android.player.media.PlayerEngineImpl.PlaybackMode;
 import com.hrw.android.player.utils.Constants;
 
-public class PlayerActivity extends Activity {
+public class PlayerActivity extends Activity
+{
 	private BelmotPlayer belmotPlayer;
 	private ImageButton back_btn;
 	private Intent intent;
@@ -37,8 +38,10 @@ public class PlayerActivity extends Activity {
 
 	private Handler seek_bar_handler = new Handler();
 
-	private Runnable refresh = new Runnable() {
-		public void run() {
+	private Runnable refresh = new Runnable()
+	{
+		public void run()
+		{
 			int currently_Progress = seek_bar.getProgress() + 1000;// 加1秒
 			seek_bar.setProgress(currently_Progress);
 			playback_current_time_tv.setText(belmotPlayer.getPlayerEngine()
@@ -48,10 +51,12 @@ public class PlayerActivity extends Activity {
 	};
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		intent = this.getIntent();
-		if (null == belmotPlayer) {
+		if (null == belmotPlayer)
+		{
 			belmotPlayer = BelmotPlayer.getInstance();
 		}
 		setContentView(R.layout.playback_activity);
@@ -64,12 +69,13 @@ public class PlayerActivity extends Activity {
 				.getPlayingPath().split("/").length - 1]);
 
 		playback_mode_btn = (ImageButton) findViewById(R.id.playback_mode);
-		playback_mode_btn.setOnClickListener(new OnClickListener() {
-
+		playback_mode_btn.setOnClickListener(new OnClickListener()
+		{
 			@Override
-			public void onClick(View v) {
-				belmotPlayer.getPlayerEngine().setPlaybackMode(
-						PlaybackMode.SHUFFLE);
+			public void onClick(View v)
+			{
+				//SHUFFLE:随机播放
+				belmotPlayer.getPlayerEngine().setPlaybackMode(PlaybackMode.SHUFFLE);
 			}
 		});
 
@@ -77,21 +83,22 @@ public class PlayerActivity extends Activity {
 		playback_total_time_tv = (TextView) findViewById(R.id.playback_total_time);
 
 		if (belmotPlayer.getPlayerEngine().getPlayingPath() != ""
-				&& null != belmotPlayer.getPlayerEngine().getPlayingPath()) {
-			playback_current_time_tv.setText(belmotPlayer.getPlayerEngine()
-					.getCurrentTime());
-			playback_total_time_tv.setText(belmotPlayer.getPlayerEngine()
-					.getDurationTime());
+				&& null != belmotPlayer.getPlayerEngine().getPlayingPath())
+		{
+			playback_current_time_tv.setText(
+					belmotPlayer.getPlayerEngine().getCurrentTime());
+			playback_total_time_tv.setText(belmotPlayer.getPlayerEngine().getDurationTime());
 		}
 
 		seek_bar = (SeekBar) findViewById(R.id.playback_seeker);
 		seek_bar.setOnSeekBarChangeListener(seekbarListener);
 
 		playback_pre_btn = (ImageButton) findViewById(R.id.playback_pre);
-		playback_pre_btn.setOnClickListener(new OnClickListener() {
-
+		playback_pre_btn.setOnClickListener(new OnClickListener()
+		{
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v)
+			{
 				belmotPlayer.getPlayerEngine().previous();
 
 			}
@@ -116,57 +123,72 @@ public class PlayerActivity extends Activity {
 
 			}
 		});
-		if (belmotPlayer.getPlayerEngine().isPlaying()) {
+		if (belmotPlayer.getPlayerEngine().isPlaying())
+		{
 			seek_bar.setMax(Integer.valueOf(belmotPlayer.getPlayerEngine()
 					.getDuration()));
 			seek_bar_handler.postDelayed(refresh, 1000);
 			playback_toggle_btn
 					.setBackgroundResource(R.drawable.play_button_default);
-		} else {
+		}
+		else
+		{
 			playback_toggle_btn
 					.setBackgroundResource(R.drawable.pause_button_default);
 		}
 	}
 
-	OnSeekBarChangeListener seekbarListener = new OnSeekBarChangeListener() {
+	OnSeekBarChangeListener seekbarListener = new OnSeekBarChangeListener()
+	{
 		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress,
-				boolean fromUser) {
-			if (fromUser) {
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+		{
+			if (fromUser)
+			{
 				if (belmotPlayer.getPlayerEngine().getPlayingPath() != ""
 						&& null != belmotPlayer.getPlayerEngine()
-								.getPlayingPath()) {
+								.getPlayingPath())
+				{
 					seek_bar_handler.removeCallbacks(refresh);
 					playback_current_time_tv.setText(belmotPlayer
 							.getPlayerEngine().getCurrentTime());
 				}
 			}
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar)
+		{
 
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {
-
-		}
-
-		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) {
+		public void onStopTrackingTouch(SeekBar seekBar)
+		{
 			if (belmotPlayer.getPlayerEngine().getPlayingPath() != ""
-					&& null != belmotPlayer.getPlayerEngine().getPlayingPath()) {
+					&& null != belmotPlayer.getPlayerEngine().getPlayingPath())
+			{
 				belmotPlayer.getPlayerEngine().forward(seekBar.getProgress());
 				seek_bar_handler.postDelayed(refresh, 1000);
-			} else {
+			}
+			else
+			{
 				seek_bar.setProgress(0);
 			}
 		}
 	};
 
-	private OnTouchListener back_btn_listener = new OnTouchListener() {
+	private OnTouchListener back_btn_listener = new OnTouchListener()
+	{
 		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		public boolean onTouch(View v, MotionEvent event)
+		{
+			if (event.getAction() == MotionEvent.ACTION_DOWN)
+			{
 
-			} else if (event.getAction() == MotionEvent.ACTION_UP) {
+			}
+			else if (event.getAction() == MotionEvent.ACTION_UP)
+			{
 				setResult(Constants.MENU_TO_PLAYER_RESULT_CODE, intent);
 				finish();
 			}
@@ -175,22 +197,28 @@ public class PlayerActivity extends Activity {
 	};
 
 	@Override
-	protected void onResume() {
+	protected void onResume()
+	{
 		if (belmotPlayer.getPlayerEngine().getPlayingPath() != ""
-				&& null != belmotPlayer.getPlayerEngine().getPlayingPath()) {
+				&& null != belmotPlayer.getPlayerEngine().getPlayingPath())
+		{
 			seek_bar.setProgress(belmotPlayer.getPlayerEngine()
 					.getCurrentPosition());
 		}
 		super.onResume();
 	}
 
-	private void play() {
-		if (belmotPlayer.getPlayerEngine().isPlaying()) {
+	private void play()
+	{
+		if (belmotPlayer.getPlayerEngine().isPlaying())
+		{
 			belmotPlayer.getPlayerEngine().pause();
 			seek_bar_handler.removeCallbacks(refresh);
 			playback_toggle_btn
 					.setBackgroundResource(R.drawable.play_button_default);
-		} else if (belmotPlayer.getPlayerEngine().isPause()) {
+		}
+		else if (belmotPlayer.getPlayerEngine().isPause())
+		{
 			belmotPlayer.getPlayerEngine().start();
 			seek_bar_handler.postDelayed(refresh, 1000);
 			playback_toggle_btn

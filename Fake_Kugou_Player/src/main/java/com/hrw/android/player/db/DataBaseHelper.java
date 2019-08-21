@@ -12,27 +12,32 @@ import com.hrw.android.player.builder.ContentValuesBuilder;
 import com.hrw.android.player.domain.Playlist;
 
 public final class DataBaseHelper extends SQLiteOpenHelper {
+	//播放列表的表格
 	public static final String PLAYLIST_TABLE_NAME = "hrw_playlist";
+	//歌曲的表格
 	public static final String AUDIO_LIST_TABLE_NAME = "hrw_playlist_audio";
+	//数据库名称
 	public static final String DATABASE_NAME = "AndroidPlayer.db";
 
-	public DataBaseHelper(Context context) {
+	public DataBaseHelper(Context context)
+	{
 		super(context, DATABASE_NAME, null, 12);
 	}
 
 	public final void onCreate(SQLiteDatabase paramSQLiteDatabase) {
 		paramSQLiteDatabase
 				.execSQL("CREATE TABLE IF NOT EXISTS hrw_playlist (id INTEGER PRIMARY KEY,name TEXT CHECK( name != '' ),add_date INTEGER,modified_date INTEGER);");
-		Log.i("Android Player:create database table:", "hrw_playlist");
+
 		paramSQLiteDatabase
 				.execSQL("CREATE TABLE IF NOT EXISTS hrw_playlist_audio (id INTEGER PRIMARY KEY,playlist_id INTEGER NOT NULL,audio_name TEXT,audio_path,add_date INTEGER,modified_date INTEGER);");
-		Log.i("Android Player:create database table:", "hrw_playlist_audio");
+
 		Playlist pl = new Playlist();
 		Date date = new Date();
 		pl.setAddDate(date);
 		pl.setUpdateDate(date);
 		pl.setName("我的最爱");
-		try {
+		try
+		{
 			ContentValues cv = ContentValuesBuilder.getInstance().bulid(pl);
 			paramSQLiteDatabase.insert("hrw_playlist", null, cv);
 		} catch (IllegalArgumentException e) {

@@ -1,15 +1,25 @@
 ECLIPSE ANDROID PROJECT IMPORT SUMMARY
 ======================================
 
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .gitignore
+* NOTICE
+* README
+
 Moved Files:
 ------------
 Android Gradle projects use a different directory structure than ADT
 Eclipse projects. Here's how the projects were restructured:
 
-* AndroidManifest.xml => Fake_Kugou_Player\src\main\AndroidManifest.xml
-* assets\ => Fake_Kugou_Player\src\main\assets
-* res\ => Fake_Kugou_Player\src\main\res\
-* src\ => Fake_Kugou_Player\src\main\java\
+* AndroidManifest.xml => xiaoMi_FileExplorer\src\main\AndroidManifest.xml
+* libs\android-support-v13.jar => xiaoMi_FileExplorer\libs\android-support-v13.jar
+* res\ => xiaoMi_FileExplorer\src\main\res\
+* src\ => xiaoMi_FileExplorer\src\main\java\
 
 Next Steps:
 -----------

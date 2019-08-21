@@ -2,7 +2,8 @@
 <RelativeLayout android:background="@drawable/bg_player" android:layout_width="fill_parent" android:layout_height="fill_parent"
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:kg="http://schemas.android.com/apk/res/com.kugou.android">
-    <RelativeLayout android:id="@+id/top_bar" android:background="@drawable/bg_player_topbar" android:layout_width="fill_parent" android:layout_height="wrap_content">
+    <RelativeLayout android:id="@+id/top_bar"
+        android:background="@drawable/bg_player_topbar" android:layout_width="fill_parent" android:layout_height="wrap_content">
         <ImageButton android:id="@+id/playback_list" android:background="@drawable/playback_list_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" />
         <ImageButton android:id="@+id/playback_mode" android:background="@drawable/playback_playmode_random_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
         <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_toLeftOf="@+id/playback_mode" android:layout_toRightOf="@+id/playback_list" android:layout_centerHorizontal="true">

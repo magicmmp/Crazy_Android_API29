@@ -1,7 +1,5 @@
 package com.hrw.android.player.adapter;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +10,9 @@ import android.widget.TextView;
 
 import com.hrw.android.player.R;
 
+import java.util.List;
+
+//其实这个listView只有2个子项：本地音乐和播放列表
 public class MenuListAdapter extends BaseAdapter {
 	private Context context;
 	private List<String> menu_list;
@@ -28,7 +29,8 @@ public class MenuListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public Object getItem(int position) {
+	public Object getItem(int position)
+	{
 		return menu_list.get(position);
 	}
 
@@ -50,7 +52,8 @@ public class MenuListAdapter extends BaseAdapter {
 		// to reinflate it. We only inflate a new View when the convertView
 		// supplied
 		// by ListView is null.
-		if (convertView == null) {
+		if (convertView == null)
+		{
 			convertView = LayoutInflater.from(context).inflate(
 					R.layout.common_list_item2, null);
 
@@ -64,15 +67,19 @@ public class MenuListAdapter extends BaseAdapter {
 			holder.right_icon = (ImageView) convertView
 					.findViewById(R.id.common_button);
 			convertView.setTag(holder);
-		} else {
+		}
+		else
+		{
 			// Get the ViewHolder back to get fast access to the TextView
 			// and the ImageView.
 			holder = (ViewHolder) convertView.getTag();
 		}
-		if ("L".equals(getItem(position).toString())) {
+		if ("L".equals(getItem(position).toString()))
+		{
 			holder.text.setText(context.getString(R.string.menu_local_music));
 			holder.left_icon.setBackgroundResource(R.drawable.ic_media);
-		} else if ("P".equals(getItem(position).toString())) {
+		} else if ("P".equals(getItem(position).toString()))
+		{
 			holder.text.setText(context.getString(R.string.menu_playlist));
 			holder.left_icon.setBackgroundResource(R.drawable.ic_playlist);
 		}
