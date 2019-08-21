@@ -7,7 +7,11 @@ import android.view.ContextThemeWrapper;
 
 import com.hrw.android.player.R;
 
-public class CommonAlertDialogBuilder {
+/**
+ * 作用是产生一个AlertDialog.Builder
+ */
+public class CommonAlertDialogBuilder
+{
 	private static Builder instance;
 	private static ContextThemeWrapper localContextThemeWrapper;
 

@@ -1,5 +1,11 @@
 package com.hrw.android.player.media;
 
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.util.Log;
+
+import com.hrw.android.player.BelmotPlayer;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,42 +13,8 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
-import com.hrw.android.player.BelmotPlayer;
-
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.util.Log;
-
-public class PlayerEngineImpl implements IPlayerEngine {
-
-	public PlayerEngineImpl() {
-		if (null == mediaPlayerEngine) {
-			Log.i(BelmotPlayer.TAG + "---PlayerEngineImpl---",
-					"Line 19 New MediaPlayerEngine();");
-			mediaPlayerEngine = new MediaPlayerEngine();
-			// mediaPlayerEngine
-			// .setOnCompletionListener(new OnCompletionListener() {
-			//
-			// @Override
-			// public void onCompletion(MediaPlayer mp) {
-			// switch (playbackMode) {
-			// case SHUFFLE: {
-			// Collections.shuffle(playbackOrder);
-			// break;
-			// }
-			// }
-			// next();
-			//
-			// }
-			// });
-
-		}
-	}
-
-	public enum PlaybackMode {
-		NORMAL, SHUFFLE, REPEAT, SHUFFLE_AND_REPEAT
-	}
-
+public class PlayerEngineImpl implements IPlayerEngine
+{
 	private PlaybackMode playbackMode = PlaybackMode.NORMAL;
 
 	private List<Integer> playbackOrder = new ArrayList<Integer>();
@@ -55,15 +27,34 @@ public class PlayerEngineImpl implements IPlayerEngine {
 
 	private MediaPlayerEngine mediaPlayerEngine = null;
 
+	public PlayerEngineImpl()
+	{
+		if (null == mediaPlayerEngine)
+		{
+			Log.i(BelmotPlayer.TAG + "---PlayerEngineImpl---",
+					"Line 19 New MediaPlayerEngine();");
+			mediaPlayerEngine = new MediaPlayerEngine();
+		}
+	}
+
+	public enum PlaybackMode
+	{
+		NORMAL, SHUFFLE, REPEAT, SHUFFLE_AND_REPEAT
+	}
+
+
+
 	@Override
 	public void setOnCompletionListener(
-			OnCompletionListener onCompletionListener) {
+			OnCompletionListener onCompletionListener)
+	{
 		Log.i(BelmotPlayer.TAG + "---PlayerEngineImpl---",
 				"Line 56 setOnCompletionListener;");
 		mediaPlayerEngine.setOnCompletionListener(onCompletionListener);
 	}
 
-	private boolean isEmpty() {
+	private boolean isEmpty()
+	{
 		return mediaList.size() == 0;
 	}
 
@@ -76,13 +67,15 @@ public class PlayerEngineImpl implements IPlayerEngine {
 	}
 
 	@Override
-	public void setPlaybackMode(PlaybackMode playbackMode) {
+	public void setPlaybackMode(PlaybackMode playbackMode)
+	{
 		this.playbackMode = playbackMode;
 		calculateOrder(true);
 	}
 
 	@Override
-	public void forward(int time) {
+	public void forward(int time)
+	{
 		mediaPlayerEngine.seekTo(time);
 
 	}
@@ -97,13 +90,20 @@ public class PlayerEngineImpl implements IPlayerEngine {
 		return mediaPlayerEngine.isPause();
 	}
 
-	private int getSelectedOrderIndexByPath(String path) {
+
+	/**
+	 * @param path 歌曲路径
+	 * @return  该路径在歌曲列表mediaList第一次出现的下标
+	 */
+	private int getSelectedOrderIndexByPath(String path)
+	{
 		int selectedIndex = mediaList.indexOf(path);
 		return playbackOrder.indexOf(selectedIndex);
 
 	}
 
-	private String getPathByPlaybackOrderIndex(int index) {
+	private String getPathByPlaybackOrderIndex(int index)
+	{
 		return mediaList.get(playbackOrder.get(index));
 	}
 
@@ -122,66 +122,52 @@ public class PlayerEngineImpl implements IPlayerEngine {
 	}
 
 	@Override
-	public void next() {
-		if (!isEmpty()) {
+	public void next()
+	{
+		if (!isEmpty())
+		{
 			selectedOrderIndex = mediaList.indexOf(path);
-			Log
-					.i(
-							BelmotPlayer.TAG + "---PlayerEngineImpl---",
-							"Line 123 next():Path="
-									+ path
-									+ "***********selectedOrderIndex="
-									+ selectedOrderIndex
-									+ "***************************************playbackOrder="
-									+ playbackOrder.toArray());
 			// selected begins from zero.
 			selectedOrderIndex++;
 			selectedOrderIndex %= mediaList.size();
 			this.path = getPathByPlaybackOrderIndex(selectedOrderIndex);
-			Log
-					.i(
-							BelmotPlayer.TAG + "---PlayerEngineImpl---",
-							"Line 123 next():next Path="
-									+ path
-									+ "***********next selectedOrderIndex="
-									+ selectedOrderIndex
-									+ "***************************************playbackOrder="
-									+ playbackOrder.toArray());
 			mediaPlayerEngine.previousOrNext();
 		}
-
 	}
 
 	@Override
-	public void pause() {
+	public void pause()
+	{
 		mediaPlayerEngine.pause();
-
 	}
 
 	@Override
-	public void play() {
+	public void play()
+	{
 		mediaPlayerEngine.play(path);
 	}
 
 	@Override
-	public void start() {
+	public void start()
+	{
 		mediaPlayerEngine.start();
 	}
 
 	@Override
-	public void reset() {
+	public void reset()
+	{
 		mediaPlayerEngine.reset();
-
 	}
 
 	@Override
-	public void rewind(int time) {
+	public void rewind(int time)
+	{
 		mediaPlayerEngine.seekTo(time);
-
 	}
 
 	@Override
-	public void skipTo(int index) {
+	public void skipTo(int index)
+	{
 
 	}
 
@@ -196,38 +182,37 @@ public class PlayerEngineImpl implements IPlayerEngine {
 	}
 
 	@Override
-	public void setPlayingPath(String path) {
+	public void setPlayingPath(String path)
+	{
 		this.path = path;
-
 	}
 
 	@Override
-	public void setMediaPathList(List<String> pathList) {
+	public void setMediaPathList(List<String> pathList)
+	{
 		this.mediaList = pathList;
 		calculateOrder(true);
-
 	}
 
-	private void calculateOrder(boolean force) {
+	private void calculateOrder(boolean force)
+	{
 		int beforeSelected = 0;
-		if (!playbackOrder.isEmpty()) {
+		if (!playbackOrder.isEmpty())
+		{
 			beforeSelected = playbackOrder.get(selectedOrderIndex);
 			playbackOrder.clear();
 		}
-		Log
-				.i(BelmotPlayer.TAG + "---PlayerEngineImpl---",
-						"Line 200 calculateOrder():beforeSelected="
-								+ beforeSelected
-								+ "***********selectedOrderIndex="
-								+ selectedOrderIndex);
-		for (int i = 0; i < getListSize(); i++) {
+
+		for (int i = 0; i < getListSize(); i++)
+		{
 			playbackOrder.add(i, i);
 		}
 
 		if (null == playbackMode) {
 			playbackMode = PlaybackMode.NORMAL;
 		}
-		switch (playbackMode) {
+		switch (playbackMode)
+		{
 		case NORMAL: {
 			break;
 		}
@@ -235,7 +220,8 @@ public class PlayerEngineImpl implements IPlayerEngine {
 			Collections.shuffle(playbackOrder);
 			break;
 		}
-		case REPEAT: {
+		case REPEAT:
+		{
 			selectedOrderIndex = beforeSelected;
 			break;
 		}
@@ -249,8 +235,8 @@ public class PlayerEngineImpl implements IPlayerEngine {
 
 	}
 
-	private class MediaPlayerEngine extends MediaPlayer {
-
+	private class MediaPlayerEngine extends MediaPlayer
+	{
 		private boolean isPause = false;
 
 		public boolean isPause() {
@@ -258,25 +244,35 @@ public class PlayerEngineImpl implements IPlayerEngine {
 		}
 
 		@Override
-		public void reset() {
+		public void reset()
+		{
 			isPause = false;
 			super.reset();
 		}
 
-		public void play(String path) {
-			try {
+		public void play(String path)
+		{
+			try
+			{
 				this.setDataSource(path);
-				if (!isPause) {
+				if (!isPause)
+				{
 					super.prepare();
 				}
 				super.start();
-			} catch (IllegalArgumentException e) {
+			}
+			catch (IllegalArgumentException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IllegalStateException e) {
+			}
+			catch (IllegalStateException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -284,27 +280,30 @@ public class PlayerEngineImpl implements IPlayerEngine {
 		}
 
 		@Override
-		public void stop() throws IllegalStateException {
+		public void stop() throws IllegalStateException
+		{
 			isPause = false;
 			super.stop();
 		}
 
 		@Override
-		public void pause() throws IllegalStateException {
+		public void pause() throws IllegalStateException
+		{
 			isPause = true;
 			super.pause();
 		}
 
-		public void previousOrNext() {
+		public void previousOrNext()
+		{
 			reset();
 			Log.i(BelmotPlayer.TAG, "previousOrNext:path = " + path);
 			play(path);
-
 		}
 	}
 
 	@Override
-	public String getCurrentTime() {
+	public String getCurrentTime()
+	{
 		return getTime(mediaPlayerEngine.getCurrentPosition());
 	}
 
@@ -318,7 +317,8 @@ public class PlayerEngineImpl implements IPlayerEngine {
 		return playbackMode;
 	}
 
-	private String getTime(int timeMs) {
+	private String getTime(int timeMs)
+	{
 		int totalSeconds = timeMs / 1000;// 获取文件有多少秒
 		StringBuilder mFormatBuilder = new StringBuilder();
 		Formatter mFormatter = new Formatter(mFormatBuilder, Locale

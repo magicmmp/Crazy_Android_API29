@@ -10,8 +10,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
 import com.hrw.android.player.BelmotPlayer;
 import com.hrw.android.player.R;
@@ -47,6 +47,8 @@ public class PlayerActivity extends Activity
 			playback_current_time_tv.setText(belmotPlayer.getPlayerEngine()
 					.getCurrentTime());// 每1000m刷新歌曲音轨
 			seek_bar_handler.postDelayed(refresh, 1000);
+
+
 		}
 	};
 

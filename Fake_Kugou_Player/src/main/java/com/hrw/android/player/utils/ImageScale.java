@@ -8,9 +8,11 @@ import android.graphics.drawable.BitmapDrawable;
 
 import com.hrw.android.player.R;
 
-public class ImageScale {
+public class ImageScale
+{
 
-	public static BitmapDrawable getImage(Context context) {
+	public static BitmapDrawable getImage(Context context)
+	{
 		// 加载需要操作的图片，这里是eoeAndroid的logo图片
 		Bitmap bitmapOrg = BitmapFactory.decodeResource(context.getResources(),
 				R.drawable.icon);

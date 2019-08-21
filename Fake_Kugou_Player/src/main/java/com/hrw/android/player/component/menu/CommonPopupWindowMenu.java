@@ -12,7 +12,9 @@ import android.widget.PopupWindow;
 
 import com.hrw.android.player.R;
 
-//就是那个弹出选项框
+/**
+ * 就是那个弹出的功能菜单
+ */
 public class CommonPopupWindowMenu extends PopupWindow
 {
 	private Context context;

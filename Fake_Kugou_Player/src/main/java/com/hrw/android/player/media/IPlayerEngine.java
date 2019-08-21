@@ -1,12 +1,13 @@
 package com.hrw.android.player.media;
 
-import java.util.List;
+import android.media.MediaPlayer.OnCompletionListener;
 
 import com.hrw.android.player.media.PlayerEngineImpl.PlaybackMode;
 
-import android.media.MediaPlayer.OnCompletionListener;
+import java.util.List;
 
-public interface IPlayerEngine {
+public interface IPlayerEngine
+{
 
 	void play();
 

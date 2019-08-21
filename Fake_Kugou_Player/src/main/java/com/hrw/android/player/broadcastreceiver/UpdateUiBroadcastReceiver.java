@@ -9,15 +9,18 @@ import com.hrw.android.player.R;
 import com.hrw.android.player.activity.HomeActivity;
 import com.hrw.android.player.utils.Constants;
 
-public class UpdateUiBroadcastReceiver extends BroadcastReceiver {
+public class UpdateUiBroadcastReceiver extends BroadcastReceiver
+{
 	private HomeActivity mainActivity;
 
-	public UpdateUiBroadcastReceiver(HomeActivity mainActivity) {
+	public UpdateUiBroadcastReceiver(HomeActivity mainActivity)
+	{
 		this.mainActivity = mainActivity;
 	}
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(Context context, Intent intent)
+	{
 		if (Constants.UPDATE_UI_ACTION.equals(intent.getAction())) {
 			mainActivity.findViewById(R.id.list_back).setVisibility(
 					View.INVISIBLE);

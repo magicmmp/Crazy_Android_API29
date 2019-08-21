@@ -13,7 +13,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SystemService {
+/**
+ * 提供一些查找数据库，搜索目录的方法。
+ * 与Android的Service组件无关
+ */
+public class SystemService
+{
 
 	private Context context;
 	private Cursor cursor;
@@ -74,7 +79,11 @@ public class SystemService {
 		return list;
 
 	}
-//搜索音频数据库，将歌曲所在的目录全部返回
+
+	/**
+	 * 搜索音频数据库，将歌曲所在的目录全部返回
+	 * @return 目录集合
+	 */
 	public Set<String> getFolderContainMedia()
 	{
 		Set<String> f = new HashSet<String>();

@@ -82,6 +82,7 @@ public class MusicListAdapter extends BaseAdapter
 				: new String[] { ((Audio) getItem(position)).getPath() });
 	}
 
+
 	private void initApplication()
 	{
 		if (null == belmotPlayer)

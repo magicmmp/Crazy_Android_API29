@@ -7,9 +7,12 @@ import com.hrw.android.player.orm.annotation.Table;
 import java.util.Date;
 
 
-
+/**
+ * 描述播放列表的JavaBean
+ */
 @Table(name = DataBaseHelper.PLAYLIST_TABLE_NAME)
-public class Playlist extends BaseDomain {
+public class Playlist extends BaseDomain
+{
 
 	private Long id;
 	@Column(name = "name")

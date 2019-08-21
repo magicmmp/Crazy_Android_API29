@@ -1,20 +1,22 @@
 package com.hrw.android.player;
 
-import com.hrw.android.player.media.IPlayerEngine;
-import com.hrw.android.player.media.PlayerEngineImpl;
-
 import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+
+import com.hrw.android.player.media.IPlayerEngine;
+import com.hrw.android.player.media.PlayerEngineImpl;
 
 public class BelmotPlayer extends Application {
 	public static String TAG = "BelmotPlayer";
 
 	private IPlayerEngine playerEngine;
 
-	public IPlayerEngine getPlayerEngine() {
-		if (null == playerEngine) {
+	public IPlayerEngine getPlayerEngine()
+	{
+		if (null == playerEngine)
+		{
 			playerEngine = new PlayerEngineImpl();
 		}
 		return playerEngine;
@@ -23,7 +25,8 @@ public class BelmotPlayer extends Application {
 	private static BelmotPlayer instance;
 
 	@Override
-	public void onCreate() {
+	public void onCreate()
+	{
 		instance = this;
 		super.onCreate();
 	}

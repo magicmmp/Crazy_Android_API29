@@ -25,6 +25,8 @@ public class SearchMusicActivity extends BaseListActivity
 	Context context;
 	Set<Integer> popUpMenu = new HashSet<Integer>();
 
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
