@@ -13,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
+
 
     VideoView videoView;
     MediaController mController;

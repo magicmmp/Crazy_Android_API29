@@ -43,6 +43,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  */
 public class MainActivity extends AppCompatActivity implements OnClickListener
 {
+
     private String TAG="hehe";
     // 获取界面中显示歌曲标题、作者文本框
     private TextView title, author;
