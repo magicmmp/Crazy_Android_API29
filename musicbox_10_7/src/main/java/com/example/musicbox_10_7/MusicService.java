@@ -1,5 +1,9 @@
 package com.example.musicbox_10_7;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -7,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
@@ -14,6 +19,7 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
@@ -28,7 +34,7 @@ public class MusicService extends Service
     MediaPlayer mPlayer;
     String TAG="hehe";
     // 当前的状态，0x11代表没有播放；0x12代表正在播放；0x13代表暂停
-    private int status = 0x11;
+    private int status = Constants.IDLE;
     // 记录当前正在播放的音乐
     private int current = 0;
     private int songTotal=0;
@@ -53,8 +59,8 @@ public class MusicService extends Service
         // 创建IntentFilter
         IntentFilter filter = new IntentFilter();
         //接受播放控制和UI数据更新 两种广播请求
-        filter.addAction(BroadcastActions.play_CTL_ACTION);
-        filter.addAction(BroadcastActions.request_UI_Data_ACTION);
+        filter.addAction(Constants.play_CTL_ACTION);
+        filter.addAction(Constants.request_UI_Data_ACTION);
         localBroadcastManager.registerReceiver(serviceReceiver, filter);
         // 创建MediaPlayer
         mPlayer = new MediaPlayer();
@@ -76,7 +82,40 @@ public class MusicService extends Service
                 SendUIData();
             }
         });
+
+        /**
+         * android8.0及以上需要设置通知渠道NotificationChannel。
+         * 否则，通知将无法展示。
+         */
+        String CHANNEL_ONE_ID = "com.primedu.cn";
+        String CHANNEL_ONE_NAME = "Channel One";
+        NotificationChannel notificationChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationChannel = new NotificationChannel(CHANNEL_ONE_ID,
+                    CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setShowBadge(true);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(notificationChannel);
+        }
+        //设为前台服务，避免Service被回收
+        Intent intent=new Intent(this,MainActivity.class);
+        PendingIntent pi=PendingIntent.getActivity(this,0,intent,0);
+        Notification notification=new NotificationCompat.Builder(this)
+                .setChannelId(CHANNEL_ONE_ID)
+                .setContentTitle("音乐盒")
+                .setContentText("音乐盒正在运行")
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.icon)
+                .setContentIntent(pi)
+                .build();
+
+        startForeground(1,notification);
     }
+
+
 
 
     /**
@@ -86,7 +125,7 @@ public class MusicService extends Service
     void SendUIData()
     {
         // 广播通知Activity更改图标、文本框
-        Intent sendIntent = new Intent(BroadcastActions.UI_UPDATE_ACTION);
+        Intent sendIntent = new Intent(Constants.UI_UPDATE_ACTION);
         sendIntent.putExtra("songTotal", songTotal);
         sendIntent.putExtra("current", current);
         sendIntent.putExtra("status", status);
@@ -105,7 +144,7 @@ public class MusicService extends Service
         public void onReceive(final Context context, Intent intent)
         {
             //如果是请求UI数据的
-            if(intent.getAction()==BroadcastActions.request_UI_Data_ACTION)
+            if(intent.getAction()== Constants.request_UI_Data_ACTION)
             {
                 SendUIData();
                 return;
@@ -118,42 +157,42 @@ public class MusicService extends Service
                 // 播放或暂停
                 case 1:
                     // 原来处于没有播放状态
-                    if (status == 0x11)
+                    if (status == Constants.IDLE)
                     {
                         // 准备并播放音乐
                         prepareAndPlay(songList.get(current).path);
-                        status = 0x12;
+                        status = Constants.PLAYING;
                     }
                     // 原来处于播放状态
-                    else if (status == 0x12)
+                    else if (status == Constants.PLAYING)
                     {
                         // 暂停
                         mPlayer.pause();
                         // 改变为暂停状态
-                        status = 0x13;
+                        status = Constants.PAUSE;
                     }
                     // 原来处于暂停状态
-                    else if (status == 0x13)
+                    else if (status == Constants.PAUSE)
                     {
                         // 播放
                         mPlayer.start();
                         // 改变状态
-                        status = 0x12;
+                        status = Constants.PLAYING;
                     }
                     break;
                 // 停止播放
                 case 2:
                     // 如果原来正在播放或暂停
-                    if (status == 0x12 || status == 0x13)
+                    if (status == Constants.PLAYING || status == Constants.PAUSE)
                     {
                         // 停止播放
                         mPlayer.stop();
-                        status = 0x11;
+                        status = Constants.IDLE;
                     }
                     break;
                     //上一首
                 case 3:
-                    if (status == 0x12 || status == 0x13)
+                    if (status == Constants.PLAYING || status == Constants.PAUSE)
                     {
                         // 先停止当前歌曲播放
                         mPlayer.stop();
@@ -163,12 +202,12 @@ public class MusicService extends Service
                         current=songList.size()-1;
                     // 准备并播放音乐
                     prepareAndPlay(songList.get(current).path);
-                    status = 0x12;
+                    status = Constants.PLAYING;
                     break;
                     //下一首
                 case 4:
                     // 如果原来正在播放或暂停
-                    if (status == 0x12 || status == 0x13)
+                    if (status == Constants.PLAYING || status == Constants.PAUSE)
                     {
                         // 停止播放
                         mPlayer.stop();
@@ -179,7 +218,7 @@ public class MusicService extends Service
 
                     // 准备并播放音乐
                     prepareAndPlay(songList.get(current).path);
-                    status = 0x12;
+                    status = Constants.PLAYING;
 
                     break;
             }
@@ -259,6 +298,8 @@ public class MusicService extends Service
     {
         super.onDestroy();
         Log.d(TAG, "服务destroy。");
+        //取消通知栏前台显示
+        stopForeground(true);
         mPlayer.release();
         localBroadcastManager.unregisterReceiver(serviceReceiver);
     }

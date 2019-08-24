@@ -39,6 +39,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  *
  * 问题：
  * (1)当手机里一首MP3也没有时，会出现数组下标越界错误。
+ * (2)用了Service播放音乐，但是Service经常莫名Destroy了。->使用前台服务解决了.
  */
 public class MainActivity extends AppCompatActivity implements OnClickListener
 {
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
 
     // 定义音乐的播放状态，0x11代表没有播放；0x12代表正在播放；0x13代表暂停
     private int status;//后台播放器的状态码
+    int total;
     Intent startServiceIntent;
     private LocalBroadcastManager localBroadcastManager;
     //Activity只需要接受UI数据的广播
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         // 创建IntentFilter
         IntentFilter filter = new IntentFilter();
         // 监听service发来的UPDATE_ACTION
-        filter.addAction(BroadcastActions.UI_UPDATE_ACTION);
+        filter.addAction(Constants.UI_UPDATE_ACTION);
         // 注册BroadcastReceiver，以获取界面更新信息
         localBroadcastManager.registerReceiver(UI_Update_Receiver,filter);
 
@@ -106,8 +108,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
     protected void onStart()
     {
         super.onStart();
+
         // 发送广播，请求UI更新的数据
-        Intent intent = new Intent(BroadcastActions.request_UI_Data_ACTION);
+        Intent intent = new Intent(Constants.request_UI_Data_ACTION);
         localBroadcastManager.sendBroadcast(intent);
     }
 
@@ -118,14 +121,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         public void onReceive(Context context, Intent intent)
         {
             // 获取Intent中的update消息，update代表播放状态
-            status = intent.getIntExtra("status", 0x11);
+            status = intent.getIntExtra("status", Constants.IDLE);
+            total=intent.getIntExtra("songTotal",0);
+            Bitmap bitmap;
             // current代表当前正在播放的歌曲序号
-            int current = intent.getIntExtra("current", -1);
-            if (status!=0x11)
+            int current = intent.getIntExtra("current", 0);
+            if (status==Constants.PLAYING||status==Constants.PAUSE)
             {
                 Music music=(Music)intent.getSerializableExtra("song");
                 StringBuilder songInfo=new StringBuilder();
-                int total=intent.getIntExtra("songTotal",-1);
+
 
                 songInfo.append(current+1+"/"+total+": "+music.name);
                 songInfo.append(",歌手："+music.artist);
@@ -133,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
 
                 title.setText(songInfo.toString());
                 author.setText("时长："+timeParse(music.duration));
-                Bitmap bitmap;
+
                 if (music.AlbumImagePath != null)
                 {
                     bitmap = BitmapFactory.decodeFile(music.AlbumImagePath);
@@ -144,18 +149,24 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                 }
                 imageView.setImageBitmap(bitmap);
             }
+            else if(status==Constants.IDLE)
+            {
+                title.setText("本地音乐播放器");
+                author.setText("共 "+total+" 首歌");
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_background);
+            }
             switch (status)
             {
-                case 0x11:
+                case Constants.IDLE:
                     play.setImageResource(R.drawable.play);
                     break;
                 // 控制系统进入播放状态
-                case 0x12:
+                case Constants.PLAYING:
                     // 播放状态下设置使用暂停图标
                     play.setImageResource(R.drawable.pause);
                     break;
                 // 控制系统进入暂停状态
-                case 0x13:
+                case Constants.PAUSE:
                     // 暂停状态下设置使用播放图标
                     play.setImageResource(R.drawable.play);
                     break;
@@ -192,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
     public void onClick(View source)
     {
         // 创建Intent，控制播放器
-        Intent intent = new Intent(BroadcastActions.play_CTL_ACTION);
+        Intent intent = new Intent(Constants.play_CTL_ACTION);
         switch (source.getId())
         {
             // 按下播放/暂停按钮
@@ -227,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         localBroadcastManager.unregisterReceiver(UI_Update_Receiver);
 
         //如果后台不放歌，就停止Service
-        if(status==0x11)
+        if(status==Constants.IDLE)
             stopService(startServiceIntent);
     }
 
