@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         }
 */
         // 创建MediaPlayer对象
-        mPlayer = MediaPlayer.create(this, R.raw.yan_yuan);
+        mPlayer = MediaPlayer.create(this, R.raw.lv_xing_de_yi_yi);
         // 初始化示波器
         setupVisualizer();
         // 初始化均衡控制器

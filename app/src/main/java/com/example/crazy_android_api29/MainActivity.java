@@ -2,8 +2,8 @@ package com.example.crazy_android_api29;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -13,9 +13,11 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar=findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        ActionBar actionbar = getSupportActionBar();
+        if (actionbar != null) {
+            actionbar.hide();
+        }
     }
+
+
 }
