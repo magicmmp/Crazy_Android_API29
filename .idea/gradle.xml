@@ -3,11 +3,38 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <compositeConfiguration>
-          <compositeBuild compositeDefinitionSource="SCRIPT" />
-        </compositeConfiguration>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Fake_Kugou_Player" />
+            <option value="$PROJECT_DIR$/accelerometer_15_1" />
+            <option value="$PROJECT_DIR$/addshortcut_14_3" />
+            <option value="$PROJECT_DIR$/alarmchangewallpaper_10_6" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/audioeffect_11_1" />
+            <option value="$PROJECT_DIR$/audiomanager_10_4" />
+            <option value="$PROJECT_DIR$/compass_15_3" />
+            <option value="$PROJECT_DIR$/desktopapp_14_4" />
+            <option value="$PROJECT_DIR$/groupsend_10_3" />
+            <option value="$PROJECT_DIR$/ledclock_14_4" />
+            <option value="$PROJECT_DIR$/listactivity_listener_test" />
+            <option value="$PROJECT_DIR$/livewallpaper_14_2" />
+            <option value="$PROJECT_DIR$/material_design" />
+            <option value="$PROJECT_DIR$/minibrowser_13_4" />
+            <option value="$PROJECT_DIR$/musicbox_10_7" />
+            <option value="$PROJECT_DIR$/mymusicplayer" />
+            <option value="$PROJECT_DIR$/newsapp_use_fragment" />
+            <option value="$PROJECT_DIR$/recordsound_11_2" />
+            <option value="$PROJECT_DIR$/rotatepolygon_12_3" />
+            <option value="$PROJECT_DIR$/sd_card_file_read_and_write" />
+            <option value="$PROJECT_DIR$/sensor_15_2" />
+            <option value="$PROJECT_DIR$/sharecontacts_contentprovider_9_2" />
+            <option value="$PROJECT_DIR$/sharecontacts_contentresolver_9_2" />
+            <option value="$PROJECT_DIR$/videoview_11_1" />
+          </set>
+        </option>
         <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
